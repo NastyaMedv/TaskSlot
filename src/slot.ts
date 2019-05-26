@@ -58,7 +58,7 @@ function addButton() {
     var textureButtonOver = PIXI.Texture.fromImage('img/btn_spin_hover.png');
     var textureButtonDisabled = PIXI.Texture.fromImage('img/btn_spin_disabled.png');
 
-    const button = new PIXI.Sprite(textureButton);
+    var button = new PIXI.Sprite(textureButton);
     button.anchor.set(0.5);
     button.x = 600;
     button.y = 810;
@@ -80,14 +80,23 @@ function addButton() {
           this.alpha = 1;
           hideReel();
           this.texture = textureButtonDisabled;
+          button.interactive = false;
           setTimeout(function() {
             initReel();
-            this.texture = textureButton;
+            if (button.isOver) {
+                button.texture = textureButtonOver;
+            } else {
+                button.texture = textureButton;
+            }
+            button.interactive = true;
           }, 500);
       }
 
       function onButtonUp() {
           this.isdown = false;
+          if (this.texture == textureButtonDisabled) {
+              return;
+          }
           if (this.isOver) {
               this.texture = textureButtonOver;
           } else {
@@ -97,7 +106,7 @@ function addButton() {
 
       function onButtonOver() {
           this.isOver = true;
-          if (this.isdown) {
+          if ((this.isdown)||(this.texture == textureButtonDisabled)) {
               return;
           }
           this.texture = textureButtonOver;
@@ -105,7 +114,7 @@ function addButton() {
 
       function onButtonOut() {
           this.isOver = false;
-          if (this.isdown) {
+          if ((this.isdown)||(this.texture == textureButtonDisabled)) {
               return;
           }
           this.texture = textureButton;
