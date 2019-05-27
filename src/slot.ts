@@ -26,32 +26,39 @@ addButton();
 
 function initReel(sound) {
   for (let i=0; i<5; i++) {
-    for (let j=0; j<3; j++) {
-      let picId = Math.floor(Math.random()*6+1);
-      let texture = PIXI.Texture.fromImage('img/symbol_'+picId+'.png');
-      let symbol = new PIXI.Sprite(texture);
-      symbol.anchor.x = 0;
-      symbol.anchor.y = 0;
-      symbol.position.x = startX + i * width;
-      symbol.position.y = startY + j * height;
-      symbol.scale.x = 1;
-      symbol.scale.y = 1;
-      var soundReel = new Howl({
-        src: ['sounds/Reel_Stop_'+sound+'.mp3']
-      });
-      let t = (i*3+j)*60;
-      setTimeout(function() {
-        reel.addChild(symbol);
-        soundReel.play();
-        symbols.push(symbol);
-      }, t);
-    }
+    setTimeout(function() {
+      for (let j=2; j>=0; j--) {
+        let picId = Math.floor(Math.random()*6+1);
+        let texture = PIXI.Texture.fromImage('img/symbol_'+picId+'.png');
+        let symbol = new PIXI.Sprite(texture);
+        symbol.anchor.x = 0;
+        symbol.anchor.y = 0;
+        symbol.position.x = startX + i * width;
+        symbol.position.y = startY + j * height;
+        symbol.scale.x = 1;
+        symbol.scale.y = 1;
+        var soundReel = new Howl({
+          src: ['sounds/Reel_Stop_'+sound+'.mp3']
+        });
+        setTimeout(function() {
+          reel.addChild(symbol);
+          soundReel.play();
+          symbols.push(symbol);
+        }, (3-j)*220);
+      }
+    } , i*180);
   }
 }
 
 function hideReel() {
-  while (reel.children.length !=0) {
-      reel.removeChildAt(0);
+  for (let i=0; i<5; i++) {
+    setTimeout(function() {
+      for (let j=2; j>=0; j--) {
+        setTimeout(function() {
+          reel.removeChildAt(0);
+        }, (3-j)*120);
+      }
+    } , i*100);
   }
 }
 
@@ -92,13 +99,15 @@ function addButton() {
           button.interactive = false;
           setTimeout(function() {
             initReel(soundId);
+          }, 660);
+          setTimeout(function() {
             if (button.isOver) {
                 button.texture = textureButtonOver;
             } else {
                 button.texture = textureButton;
             }
             button.interactive = true;
-          }, 500);
+          }, 2080);
       }
 
       function onButtonUp() {
@@ -129,8 +138,6 @@ function addButton() {
           this.texture = textureButton;
       }
 }
-
-
 
 animate();
 function animate() {
