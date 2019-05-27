@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import {Howl, Howler} from 'howler';
 
 var renderer = PIXI.autoDetectRenderer(1220, 900, {backgroundColor: 0xB7EDF8});
 document.body.appendChild(renderer.view);
@@ -20,10 +21,10 @@ stage.addChild(myMask);
 reel.mask = myMask;
 
 var symbols = [];
-initReel();
+initReel(1);
 addButton();
 
-function initReel() {
+function initReel(sound) {
   for (let i=0; i<5; i++) {
     for (let j=0; j<3; j++) {
       let picId = Math.floor(Math.random()*6+1);
@@ -35,13 +36,15 @@ function initReel() {
       symbol.position.y = startY + j * height;
       symbol.scale.x = 1;
       symbol.scale.y = 1;
-      //reel.addChild(symbol);
-      let t = (i*3+j)*20;
+      var soundReel = new Howl({
+        src: ['sounds/Reel_Stop_'+sound+'.mp3']
+      });
+      let t = (i*3+j)*60;
       setTimeout(function() {
         reel.addChild(symbol);
+        soundReel.play();
         symbols.push(symbol);
       }, t);
-      //symbols.push(symbol);
     }
   }
 }
@@ -65,6 +68,10 @@ function addButton() {
     button.interactive = true;
     button.buttonMode = true;
 
+    var soundStart = new Howl({
+      src: ['sounds/Start_Button.mp3']
+    });
+
     button
       .on('pointerdown', onButtonDown)
       .on('pointerup', onButtonUp)
@@ -80,9 +87,11 @@ function addButton() {
           this.alpha = 1;
           hideReel();
           this.texture = textureButtonDisabled;
+          soundStart.play();
+          let soundId = Math.floor(Math.random()*4+1);
           button.interactive = false;
           setTimeout(function() {
-            initReel();
+            initReel(soundId);
             if (button.isOver) {
                 button.texture = textureButtonOver;
             } else {
