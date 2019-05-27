@@ -42,11 +42,9 @@ function initReel(sound) {
         });
         setTimeout(function() {
           reel.addChild(symbol);
-
           animate2(function(timePassed) {
             symbol.position.y = startY + j * height + timePassed * 1.2;
           }, 400);
-
           setTimeout(function() {
             soundReel.play();
           }, 400);
@@ -61,13 +59,10 @@ function hideReel() {
   for (let i=0; i<5; i++) {
     setTimeout(function() {
       for (let j=2; j>=0; j--) {
-
         setTimeout(function() {
-          //let currentY = reel.children[0].y;
           animate2(function(timePassed) {
             reel.children[i*3+(2-j)].position.y += timePassed * 1.2;
           }, 400);
-
         }, (3-j)*120);
       }
     } , i*100);
