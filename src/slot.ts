@@ -5,7 +5,7 @@ var renderer = PIXI.autoDetectRenderer(1220, 900, {backgroundColor: 0xB7EDF8});
 document.body.appendChild(renderer.view);
 
 const startX = 10;
-const startY = 10;
+const startY = -490;
 const width = 240;
 const height = 230;
 
@@ -42,7 +42,14 @@ function initReel(sound) {
         });
         setTimeout(function() {
           reel.addChild(symbol);
-          soundReel.play();
+
+          animate2(function(timePassed) {
+            symbol.position.y = startY + j * height + timePassed * 1.2;
+          }, 400);
+
+          setTimeout(function() {
+            soundReel.play();
+          }, 400);
           symbols.push(symbol);
         }, (3-j)*220);
       }
@@ -54,12 +61,17 @@ function hideReel() {
   for (let i=0; i<5; i++) {
     setTimeout(function() {
       for (let j=2; j>=0; j--) {
+
         setTimeout(function() {
-          reel.removeChildAt(0);
+          //let currentY = reel.children[0].y;
+          animate2(function(timePassed) {
+            reel.children[i*3+(2-j)].position.y += timePassed * 1.2;
+          }, 400);
+
         }, (3-j)*120);
       }
     } , i*100);
-  }
+  };
 }
 
 function addButton() {
@@ -99,15 +111,16 @@ function addButton() {
           button.interactive = false;
           setTimeout(function() {
             initReel(soundId);
-          }, 660);
+          }, 720);
           setTimeout(function() {
+            for (let i=0; i<15; i++) {reel.removeChildAt(0);}
             if (button.isOver) {
                 button.texture = textureButtonOver;
             } else {
                 button.texture = textureButton;
             }
             button.interactive = true;
-          }, 2080);
+          }, 2380);
       }
 
       function onButtonUp() {
@@ -143,4 +156,16 @@ animate();
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(stage);
+}
+
+function animate2(draw, duration) {
+    var start = performance.now();
+    requestAnimationFrame(function animate(time) {
+        var timePassed = time - start;
+        if (timePassed > duration) timePassed = duration;
+        draw(timePassed);
+        if (timePassed < duration) {
+          requestAnimationFrame(animate);
+        }
+    });
 }
